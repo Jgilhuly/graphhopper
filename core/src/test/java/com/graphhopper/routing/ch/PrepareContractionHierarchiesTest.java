@@ -34,6 +34,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.Random;
+import java.lang.reflect.Field;
 
 import static com.graphhopper.util.GHUtility.updateDistancesFor;
 import static org.junit.jupiter.api.Assertions.*;
@@ -295,6 +296,20 @@ public class PrepareContractionHierarchiesTest {
         assertEquals(IntArrayList.from(8, 2), getAdjs(inExplorer.setBaseNode(7)));
         assertEquals(IntArrayList.from(3), getAdjs(outExplorer.setBaseNode(8)));
         assertEquals(IntArrayList.from(), getAdjs(inExplorer.setBaseNode(8)));
+    }
+
+    @Test
+    void testFixedNodeOrderingReleasesTemporaryData() throws Exception {
+        // We want to make sure that using a fixed node ordering does not keep the large temporary preparation data
+        // structures alive after doWork() finishes (this is important for large imports).
+        initExampleGraph(g, speedEnc);
+        PrepareContractionHierarchies prepare = createPrepareContractionHierarchies(g)
+                .useFixedNodeOrdering(NodeOrderingProvider.identity(g.getNodes()));
+        prepare.doWork();
+
+        Field sortedNodesField = PrepareContractionHierarchies.class.getDeclaredField("sortedNodes");
+        sortedNodesField.setAccessible(true);
+        assertNull(sortedNodesField.get(prepare), "expected preparation priority queue to be released");
     }
 
     private IntArrayList getAdjs(RoutingCHEdgeIterator iter) {

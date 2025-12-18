@@ -334,6 +334,10 @@ public class PrepareContractionHierarchies {
             }
         }
         nodeContractor.finishContraction();
+
+        // Preparation works only once so we can release temporary data.
+        // We keep the preparation object itself intact, because callers still need access to the CH storage/config.
+        _close();
     }
 
     private void stopIfInterrupted() {
