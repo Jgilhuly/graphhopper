@@ -10,7 +10,6 @@ permissions:
 
 jobs:
   docs:
-    if: ${{ !startsWith(github.head_ref, 'docs/') }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
