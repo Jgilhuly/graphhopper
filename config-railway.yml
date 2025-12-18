@@ -1,0 +1,81 @@
+graphhopper:
+
+  # OpenStreetMap input file PBF or XML, can be changed via command line -Ddw.graphhopper.datareader.file=some.pbf
+  datareader.file: ""
+  # Local folder used by graphhopper to store its data
+  graph.location: graph-cache
+
+  ##### Routing Profiles ####
+
+  profiles:
+   - name: car
+     custom_model_files: [car.json]
+   - name: foot
+     custom_model_files: [foot.json, foot_elevation.json]
+   - name: bike
+     custom_model_files: [bike.json, bike_elevation.json]
+
+  # Speed mode: enable CH preparation for car profile
+  profiles_ch:
+    - profile: car
+
+  # Hybrid mode: disabled for Railway deployment (saves memory)
+  profiles_lm: []
+
+  #### Encoded Values ####
+
+  graph.encoded_values: |
+    car_access, car_average_speed, country, road_class, roundabout, max_speed,
+    foot_access, foot_average_speed, foot_priority, foot_road_access, hike_rating, average_slope,
+    bike_access, bike_average_speed, bike_priority, bike_road_access, bike_network, mtb_rating,
+    road_environment,
+
+  #### Elevation ####
+
+  # Disable elevation for Railway deployment (saves memory and import time)
+  # graph.elevation.provider: srtm
+
+  #### Subnetworks ####
+
+  prepare.min_network_size: 200
+  prepare.subnetworks.threads: 1
+
+  #### Routing ####
+
+  routing.snap_preventions_default: tunnel, bridge, ferry
+  routing.non_ch.max_waypoint_distance: 1000000
+
+  #### Storage ####
+
+  import.osm.ignored_highways: ''
+  graph.dataaccess.default_type: RAM_STORE
+
+# Dropwizard server configuration
+server:
+  application_connectors:
+  - type: http
+    port: 8989
+    # Bind to 0.0.0.0 to accept Railway's proxy connections
+    bind_host: 0.0.0.0
+    max_request_header_size: 50k
+  request_log:
+      appenders: []
+  admin_connectors:
+  - type: http
+    port: 8990
+    # Admin connector also bound to 0.0.0.0 for Railway
+    bind_host: 0.0.0.0
+
+# Logging configuration
+logging:
+  appenders:
+    - type: console
+      time_zone: UTC
+      log_format: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
+  loggers:
+    "com.graphhopper.osm_warnings":
+      level: INFO
+      additive: false
+      appenders:
+        - type: console
+
