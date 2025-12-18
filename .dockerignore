@@ -1,0 +1,62 @@
+# Build artifacts
+target/
+**/target/
+*.jar
+*.war
+*.ear
+
+# IDE files
+.idea/
+.vscode/
+*.iml
+*.ipr
+*.iws
+.classpath
+.project
+.settings/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Git
+.git/
+.gitignore
+
+# Logs
+logs/
+*.log
+
+# Node modules (will be installed during build)
+node_modules/
+**/node_modules/
+web-bundle/node/
+web-bundle/node_modules/
+
+# Graph cache (will be generated at runtime)
+graph-cache/
+graph-data/
+
+# Test files
+*.gpx
+*.json
+**/test/
+
+# Documentation
+docs/
+*.md
+!README.md
+
+# CI/CD
+.github/
+.gitlab-ci.yml
+.travis.yml
+appveyor.yml
+
+# Other
+*.pbf
+*.osm
+*.gz
+*.zip
+!berlin-latest.osm.pbf
+
